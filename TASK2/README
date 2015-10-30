@@ -1,0 +1,121 @@
+	main3_2.c, pulse.c spi_led.c
+============================================
+
+This directory contains 3 files main3_2.c, pulse.c and spi_led.c.
+
+
+pulse.c -	This is a driver for pulse measurement. This is implemented in non blocking way.
+          A write system call is called from user application to trigger a pulse.
+          Interrupt is taken on GPIO15. A read is called to receive measured pulse
+          width once ready. Distance to the object is calculated taking ultrasonic
+          spread velocity in consideration.
+
+
+spi_led.c	- This is a device driver for spi interface of led matrix display.
+            This is implemented in non blocking way. 10 patterns are buffered in
+            the driver using IOCTL command. According to distance to the object,
+            specific sequence is displayed with given delay. (0, 0) is termination
+            symbol. Led matrix will display the same sequence unless change in
+            distance is notified.  Termination sequence of (0, 0) is given by user
+            application to stop kernel as well as user threads. This facilitates
+            to clear led display and both drivers can	be successfully removed.
+
+
+main3_2.c -	This is a user application displaying distance controlled animation.
+            Range of object should be within 65 cm. If distance is > 65 cm, termination
+            command is given and display is turned off.
+
+Note: STRICTLY USE TAB WIDTH OF 4 TO VIEW BOTH ' .C' FILES
+
+
+
+	Usage
+=================================
+
+Measured distance is used as a parameter to control the animation. A part of "Tetris" video game is implemeted here. A device driver
+will measure distance to the object using trigger- echo mechanism. This distance
+is communicated to user application. User application will choose the pattern to
+display according to distance. Specific sequence is displayed with given delay.
+(0, 0) is termination symbol. Led matrix will display the same sequence unless
+change in distance is notified. Sequence is changed according to distance to the
+object.
+
+Distance is divided as:
+a) 0 - 17cm : Dancing Robot
+b) 17cm - 45cm : Tetris Game
+c) 45cm - 65cm : Smiley, Game finished.
+d) > 65cm. : Turn of the display.
+
+DO NOT USE CTRL+C TO CLEAR DISPLAY OR STOP USER APPLICATION. When object is at distance > 65cm,
+all kernel and user threads will terminate.
+
+The distance to the object is Test distance = (pulse width * 340 m/s) / 2
+
+
+
+	Compilation
+================================
+
+To compile the driver and user-space application use:
+
+Change your linux terminal's present directory path to where tasks are saved.
+
+Give the source of kernel
+“source ~/SDK/environment-setup-i586-poky-linux”.
+
+Compile the driver module using “make” command.
+
+Make the executable of user program main3_2 by using command
+“$CC -o main3_2 main3_2.c -lpthread”
+
+Transfer the module and user program to board kernel using command
+“scp -r <file_name> root@<inet_address>:/home/root”
+
+Insert driver modules using insmod <>.
+
+Run the executable by using command “./main3_2” on PUTTY terminal .
+
+To delete these files  use:
+bash:~ make clean
+
+
+	Commands
+=================================
+
+To insert the module use:
+-----------------------------
+
+if you are root user:
+bash:~ rmmod spidev
+bash:~ insmod spi_led.ko
+bash:~ insmod pulse.ko
+
+if you are not root user:
+bash:~ sudo insmod spi_led.ko
+bash:~ sudo insmod pulse.ko
+[ It will prompt you to enter your password.]
+
+
+
+To remove the module use:
+------------------------------
+
+if you are root user:
+bash:~ rmmod spi_led.ko
+bash:~ rmmod pulse.ko
+
+if you are not root user:
+bash:~ sudo rmmod spi_led.ko
+bash:~ sudo rmmod pulse.ko
+[ It will prompt you to enter your password.]
+
+
+To test your driver use:
+---------------------------------
+
+if you are root user:
+bash:~ ./main3_2
+
+if you are not root user:
+bash:~ sudo ./main3_2
+[ It will prompt you to enter your password.]

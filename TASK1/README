@@ -1,0 +1,56 @@
+	main3_1.c, my_unexport.c
+============================================
+
+This directory contains 2 files main3_1.c and my_unexport.c.
+
+main3_1.c -	This is a user application displaying distance controlled
+            animation. To increase the accuracy of measurement and decrease the noise, range
+            of object should be within 3.5 cm to 55 cm. If checked out of the range,
+            program works but some noise may appear. This program runs infinitely.
+            Stop this program by pressing ctrl + c.
+
+
+my_unexport.c	- This is program to facilitate unexporting of gpio which we have
+                requested in above user application. This needs to be done
+                before running task 2.
+
+
+
+Note: STRICTLY USE TAB WIDTH OF 4 TO VIEW BOTH ' .C' FILES
+
+	Compilation
+================================
+
+To compile the driver and user-space application use:
+
+Change your linux terminal's present directory path to where tasks are saved.
+
+Give the source of kernel
+“source ~/SDK/environment-setup-i586-poky-linux”.
+
+Make the executable of user program main3_1 by using command
+“$CC -o main3_1 main3_1.c -lpthread”
+
+Transfer the module and user program to board kernel using command
+“scp -r <file_name> root@<inet_address>:/home/root”
+
+Run the executable by using command “./main3_1” on PUTTY terminal.
+To delete these files  use:
+
+bash:~ make clean
+
+
+	Usage
+=================================
+
+Measured distance is used as a parameter to control the animation. Speed of dog
+in the animation (from running to walking) depends upon how fast the object in
+front is moving. Also direction depends on whether object is moving towards the
+sensor or away from the sensor. If object is moving towards the sensor, dog will
+move in right direction and if it is going far, dog will change direction to left.
+To increase the accuracy of measurement and decrease the noise, range of object
+should be within 3.5cm to 55 cm. If checked out of the range, program works with
+some noise.
+Change in distance from sensor of the object should be minimum 0.85 cm to be
+detectable by sensor.
+The distance to the object is Test distance = (pulse width * 340 m/s) / 2
